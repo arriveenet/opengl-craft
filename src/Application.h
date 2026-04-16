@@ -1,12 +1,16 @@
 #pragma once
+#include "Window.h"
+#include <memory>
+
+class Window;
 
 class Application {
 public:
+    Application();
+    ~Application();
 
     void run();
 
 private:
-    void update(float deltaTime);
-    void draw();
-
+    std::unique_ptr<Window> m_window;
 };

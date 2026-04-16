@@ -8,10 +8,22 @@ set(TARGET opengl-craft)
 # ==================================================================================================
 set(HDRS
     Application.h
+    Engine.h
+    Shader.h
+    ShaderManager.h
+    Texture.h
+    TextureManager.h
+    Window.h
 )
 
 set(SRCS
     Application.cpp
+    Engine.cpp
+    Shader.cpp
+    ShaderManager.cpp
+    Texture.cpp
+    TextureManager.cpp
+    Window.cpp
     main.cpp
 )
 
