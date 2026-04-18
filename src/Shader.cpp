@@ -1,5 +1,9 @@
 #include "Shader.h"
 
+#include <fstream>
+#include <iostream>
+#include <vector>
+
 Shader* Shader::create(std::string_view vert, std::string_view frag)
 {
     Shader* shader = new Shader();
@@ -25,13 +29,16 @@ bool Shader::createProgram(std::string_view vert, std::string_view frag)
     GLuint vertexShader = loadShader(vert, GL_VERTEX_SHADER);
     GLuint fragmentShader = loadShader(frag, GL_FRAGMENT_SHADER);
 
+    if (vertexShader == 0 || fragmentShader == 0) {
+        return false;
+    }
+
     glCompileShader(vertexShader);
     if (!checkCompileError(vertexShader)) {
         return false;
     }
 
     glCompileShader(fragmentShader);
-    checkCompileError(fragmentShader);
     if (!checkCompileError(fragmentShader))
         return false;
 
@@ -52,31 +59,26 @@ bool Shader::createProgram(std::string_view vert, std::string_view frag)
 
 GLuint Shader::loadShader(std::string_view fileName, GLenum type)
 {
-    FILE* pFile;
-    int size;
-    char* buf;
     GLuint shader = 0;
 
-    fopen_s(&pFile, fileName.data(), "rb");
-    if (!pFile) {
-        printf("[Shader] %s open feiled!\n", fileName.data());
-        return 0;
+    std::ifstream file(fileName.data(), std::ios::ate | std::ios::binary);
+
+    if (!file.is_open()) {
+        std::cerr << "[Shader] " << fileName << "open failed!\n";
+        return shader;
     }
-    printf("[Shader] %s open succeeded.\n", fileName.data());
-    fseek(pFile, 0, SEEK_END);
-    size = ftell(pFile);
 
-    buf = (char*)malloc(size);
-    fseek(pFile, 0, SEEK_SET);
+    std::cout << "[Shader] " << fileName << "open suceeded.\n";
 
-    if (buf != 0) {
-        fread(buf, 1, size, pFile);
+    const size_t fileSize = static_cast<size_t>(file.tellg());
+    std::vector<char> buffer(fileSize);
+    file.seekg(0).read(buffer.data(), fileSize);
+    file.close();
 
-        shader = glCreateShader(type);
-        glShaderSource(shader, 1, (const GLchar**)&buf, &size);
-    }
-    free(buf);
-    fclose(pFile);
+    shader = glCreateShader(type);
+    const GLchar* source = buffer.data();
+    const GLint length = static_cast<GLint>(fileSize);
+    glShaderSource(shader, 1, &source, &length);
 
     return shader;
 }
