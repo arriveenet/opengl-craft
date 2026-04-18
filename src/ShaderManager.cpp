@@ -45,7 +45,7 @@ Shader* ShaderManager::getShader(ShaderType type)
 
 bool ShaderManager::init()
 {
-    Shader* shader = Shader::create("basic.vert", "basic.frag");
+    Shader* shader = Shader::create("shaders/basic.vert", "shaders/basic.frag");
     m_shaderMap.emplace(ShaderType::Basic, shader);
 
     return true;

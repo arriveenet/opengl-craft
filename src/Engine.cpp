@@ -1,4 +1,5 @@
 #include "Engine.h"
+#include "FileSystem.h"
 #include "ShaderManager.h"
 
 Engine* Engine::s_sharedEngine = nullptr;
@@ -21,6 +22,7 @@ void Engine::destroyInstance()
 Engine::~Engine()
 {
     ShaderManager::destroyInstance();
+    FileSystem::destroyInstance();
 }
 
 void Engine::mainLoop()

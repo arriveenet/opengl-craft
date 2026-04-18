@@ -1,5 +1,7 @@
 #include "Shader.h"
 
+#include "FileSystem.h"
+
 #include <fstream>
 #include <iostream>
 #include <vector>
@@ -61,14 +63,16 @@ GLuint Shader::loadShader(std::string_view fileName, GLenum type)
 {
     GLuint shader = 0;
 
-    std::ifstream file(fileName.data(), std::ios::ate | std::ios::binary);
+    auto fullPath = FileSystem::getInstance()->getAssetFullPath(fileName);
+
+    std::ifstream file(fullPath.data(), std::ios::ate | std::ios::binary);
 
     if (!file.is_open()) {
-        std::cerr << "[Shader] " << fileName << "open failed!\n";
+        std::cerr << "[Shader] " << fullPath << "open failed!\n";
         return shader;
     }
 
-    std::cout << "[Shader] " << fileName << "open suceeded.\n";
+    std::cout << "[Shader] " << fullPath << "open suceeded.\n";
 
     const size_t fileSize = static_cast<size_t>(file.tellg());
     std::vector<char> buffer(fileSize);
